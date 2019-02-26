@@ -2,6 +2,7 @@ import React from "react";
 import Card from "react-bootstrap/Card";
 import NewUserReport from "../components/NewUserReport";
 import ViewUserReport from "../components/ViewUserReport";
+import { FaFileAlt } from "react-icons/fa";
 
 class UserReportOptions extends React.Component {
 	constructor(props) {
@@ -26,8 +27,13 @@ class UserReportOptions extends React.Component {
 				<div className="text-center align-center" style={{ height: "80%" }}>
 					<div className="row h-100">
 						<div className="col w-100">
-							<Card className="h-100">
-								<Card.Img variant="top" src="" />
+							<Card className="h-100 align-middle">
+								<div
+									className="h-50 align-middle"
+									style={{ backgroundColor: "#45668e" }}
+								>
+									<FaFileAlt color="white" size="128px" />
+								</div>
 								<Card.Body>
 									<Card.Title>New Report</Card.Title>
 									<Card.Text>
@@ -42,7 +48,12 @@ class UserReportOptions extends React.Component {
 						</div>
 						<div className="col">
 							<Card className="h-100">
-								<Card.Img variant="top" src="" />
+								<div
+									className="h-50 align-middle"
+									style={{ backgroundColor: "#45668e" }}
+								>
+									HERE
+								</div>
 								<Card.Body>
 									<Card.Title>View Reports</Card.Title>
 									<Card.Text>

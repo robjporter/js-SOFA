@@ -3,6 +3,8 @@ import { AuthConsumer } from "react-check-auth";
 import DataBoxes from "../components/DataBoxes";
 import { adminData } from "../helpers/admindata";
 import Card from "react-bootstrap/Card";
+import Nav from "react-bootstrap/Nav";
+import Tab from "react-bootstrap/Tab";
 import Upload from "../components/Upload";
 
 class AdminReports extends Component {
@@ -37,23 +39,37 @@ class AdminReports extends Component {
 							<div className="row h-100">
 								<div className="col w-100 ml-3">
 									<Card className="h-100">
-										<Card.Header>
-											<b>Reporting</b>
-										</Card.Header>
-										<Card.Body>
-											<Upload />
-										</Card.Body>
-									</Card>
-								</div>
-								<div className="col">
-									<Card className="h-100 mr-3">
-										<Card.Header>
-											<b>Administration</b>
-										</Card.Header>
-										<Card.Body>
-											This will contain some adminy type stuff in the future if
-											it is needed.
-										</Card.Body>
+										<Tab.Container
+											id="left-tabs-example"
+											defaultActiveKey="first"
+										>
+											<Card.Header>
+												<Nav variant="tabs" defaultActiveKey="#first">
+													<Nav.Item>
+														<Nav.Link eventKey="first">
+															Upload new report
+														</Nav.Link>
+													</Nav.Item>
+													<Nav.Item>
+														<Nav.Link eventKey="second">
+															Remove old reports
+														</Nav.Link>
+													</Nav.Item>
+													<Nav.Item>
+														<Nav.Link eventKey="third">Administration</Nav.Link>
+													</Nav.Item>
+												</Nav>
+											</Card.Header>
+											<Card.Body>
+												<Tab.Content>
+													<Tab.Pane eventKey="first">
+														<Upload />
+													</Tab.Pane>
+													<Tab.Pane eventKey="second">SECOND</Tab.Pane>
+													<Tab.Pane eventKey="third">THIRD</Tab.Pane>
+												</Tab.Content>
+											</Card.Body>
+										</Tab.Container>
 									</Card>
 								</div>
 							</div>

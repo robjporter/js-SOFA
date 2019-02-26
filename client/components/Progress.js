@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "../css/Progress.css";
+import "../css/progress.css";
 
 class Progress extends Component {
 	constructor(props) {
