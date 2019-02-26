@@ -1,0 +1,74 @@
+.error {
+  color: #d0152e;
+}
+.app-message p {
+  padding: 10px;
+  border: 1px solid #1b65f6;
+  border-radius: 5px;
+  margin: 10px 0;
+  color: #1b65f6;
+}
+.app-message p.error {
+  border-color: #d0152e;
+  color: #d0152e;
+}
+
+.brand-card {
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  margin-bottom: 1.5rem;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid #c8ced3;
+  border-radius: 0.25rem;
+}
+
+.brand-card-header i {
+  font-size: 2rem;
+  color: #fff;
+}
+
+.brand-card-header {
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  height: 6rem;
+  border-radius: 0.25rem 0.25rem 0 0;
+}
+
+.bg-vk {
+  background-color: #45668e !important;
+}
+
+.brand-card-body {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  padding: 0.75rem 0;
+  text-align: center;
+}
+
+.brand-card-body > :not(:last-child) {
+  border-right: 1px solid #c8ced3;
+}
+
+.brand-card-body > * {
+  -ms-flex: 1;
+  flex: 1;
+  padding: 0.1875rem 0;
+}
+
+.text-value {
+  font-size: 1.3125rem;
+  font-weight: 600;
+}

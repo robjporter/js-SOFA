@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "username": "test@test.com",
+    "password": "$2a$10$yoEQPKMRQVE59UZVM5k5Mel3zJdODQbAWALugd.GN2JZzpwC4LxlS",
+    "firstName": "test",
+    "lastName": "user",
+    "logo": "image",
+    "role": "user",
+    "access": ["en"]
+  },
+  {
+    "id": 2,
+    "username": "test2@test.com",
+    "password": "$2a$10$D.U93qNgaH80MVnzkuszQ.i9RB00OXfEJ6GYWriPICW3Z07eY1LqS",
+    "firstName": "test2",
+    "lastName": "user2",
+    "logo": "image",
+    "role": "user",
+    "access": ["dc"]
+  },
+  {
+    "id": 3,
+    "username": "test3@test.com",
+    "password": "$2a$10$1L6Yie6rIWmhKYDjIkGsFOx7dw8z96AR1chzqzloqlwsW1aRdyOvy",
+    "firstName": "test3",
+    "lastName": "user3",
+    "logo": "image",
+    "role": "user",
+    "access": ["sec"]
+  },
+  {
+    "id": 4,
+    "username": "test4@test.com",
+    "password": "$2a$10$76UVAdiivEHrsMEStF6nwOlb4jrlqy18V06kyPatc4..hb1nDpo.u",
+    "firstName": "test4",
+    "lastName": "user4",
+    "logo": "image",
+    "role": "user",
+    "access": ["col"]
+  },
+  {
+    "id": 5,
+    "username": "test5@test.com",
+    "password": "$2a$10$P5Ax/JIJhKV8Hrvyp1n8iuV7z71F6/qnOFjDvcj.0Ygq8.2I57tGq",
+    "firstName": "test5",
+    "lastName": "user5",
+    "logo": "image",
+    "role": "admin",
+    "access": ["*"]
+  }
+]
