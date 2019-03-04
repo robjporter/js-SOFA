@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Dropzone from "./Dropzone";
+import Dropzone from "./DropZone";
 import "../css/upload.css";
 import Progress from "./Progress";
 import Button from "react-bootstrap/Button";

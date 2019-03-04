@@ -1,15 +1,24 @@
 const config = require("../config.json");
 const jwt = require("jsonwebtoken");
-const users = require("../users.json");
 const bcrypt = require("bcrypt-nodejs");
+var fs = require("fs");
 
 module.exports = {
 	authenticate,
 	validate,
 	role,
 	access,
-	logout
+	logout,
+	updatePassword
 };
+
+let users = null;
+reloadUsers();
+
+function reloadUsers() {
+	console.log("RELOADING USERS");
+	users = JSON.parse(fs.readFileSync("../users.json", "utf8"));
+}
 
 async function logout(toke) {
 	const token = toke.split(" ")[1].trim();
@@ -17,6 +26,7 @@ async function logout(toke) {
 }
 
 async function authenticate({ username, password }) {
+	reloadUsers();
 	const user = users.find(
 		u => u.username === username && bcrypt.compareSync(password, u.password)
 	);
@@ -29,6 +39,33 @@ async function authenticate({ username, password }) {
 			token
 		};
 	}
+}
+
+async function updatePassword(toke, { cPassword, nPassword }) {
+	return validate(toke).then(response => {
+		if (response) {
+			const user = users.find(
+				u =>
+					u.username === response.username &&
+					bcrypt.compareSync(cPassword, u.password)
+			);
+			if (user) {
+				var fs = require("fs");
+				var fileName = "../users.json";
+				var file = require(fileName);
+
+				file[user.id - 1].password = bcrypt.hashSync(nPassword);
+
+				fs.writeFile(fileName, JSON.stringify(file), function(err) {
+					if (err) {
+						return { passwordChange: false };
+					}
+				});
+				return { passwordChange: true };
+			}
+		}
+		return { passwordChange: false };
+	});
 }
 
 async function role(toke, role) {
@@ -44,6 +81,7 @@ async function role(toke, role) {
 }
 
 async function access(toke, access) {
+	reloadUsers();
 	return validate(toke).then(response => {
 		if (response) {
 			if (access.access != "*" && access.access != "all") {

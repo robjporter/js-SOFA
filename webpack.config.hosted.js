@@ -1,6 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-//const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
+const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 
 const outputDirectory = "dist";
@@ -53,7 +53,7 @@ module.exports = {
 		}
 	},
 	plugins: [
-		//	new UglifyJSPlugin(), // minify the chunk
+		new UglifyJSPlugin(), // minify the chunk
 		new CleanWebpackPlugin([outputDirectory]),
 		new HtmlWebpackPlugin({
 			template: "./public/index.html",

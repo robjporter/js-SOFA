@@ -1,4 +1,3 @@
-const { version } = require("../package.json");
 const userService = require("./auth/auth.service");
 const enService = require("./auth/en.service");
 const dcService = require("./auth/dc.service");
@@ -23,9 +22,12 @@ class AppRouter {
 		// SYSTEM - routes
 		// -----------------------------------------------
 
-		app.get("/api", (req, res, next) => {
+		app.get("/api/version", (req, res, next) => {
+			const { version, sofa } = require("../package.json");
 			return res.status(200).json({
-				version: version
+				appVersion: version,
+				backendVersion: sofa.backendVersion,
+				frontendVersion: sofa.frontendVersion
 			});
 		});
 
@@ -115,7 +117,7 @@ class AppRouter {
 				.catch(err => next(err));
 		});
 
-		app.get("/api/files/download", function(req, res) {
+		app.get("/api/files/download", (req, res) => {
 			const token = req.headers.authorization;
 			if (!token) {
 				res.status(400).json({ message: "Invalid token provided." });
@@ -222,6 +224,22 @@ class AppRouter {
 		// AUTH - routes
 		// -----------------------------------------------
 
+		app.post("/api/auth/updatepassword", (req, res, next) => {
+			const token = req.headers.authorization;
+			if (!token) {
+				res.status(400).json({ message: "Invalid token provided." });
+			}
+			userService
+				.updatePassword(token, req.body)
+				.then(response => {
+					if (response.passwordChange) {
+						return res.status(200).json({ message: "DONE" });
+					}
+					return res.status(403).json({ message: "Failed to update password" });
+				})
+				.catch(err => next(err));
+		});
+
 		app.post("/api/auth/logout", (req, res, next) => {
 			const token = req.headers.authorization;
 			if (!token) {
@@ -229,7 +247,10 @@ class AppRouter {
 			}
 			userService
 				.logout(token)
-				.then(response => res.status(403).json({ message: "Logout success" }))
+				.then(response => {
+					//req.session.destroy();
+					return res.status(200).json({ message: "Logout success" });
+				}) //status(200).json({ message: "Logout success" }))
 				.catch(err => next(err));
 		});
 

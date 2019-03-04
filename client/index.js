@@ -8,7 +8,7 @@ import Footer from "./components/Footer";
 import Main from "./routes/routes";
 import { AuthProvider } from "react-check-auth";
 
-const authUrl = "https://localhost/api/auth/validate";
+const authUrl = "http://localhost:9000/api/auth/validate";
 const reqOptions = {
 	method: "POST",
 	headers: {

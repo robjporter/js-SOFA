@@ -56,7 +56,14 @@ class AdminReports extends Component {
 														</Nav.Link>
 													</Nav.Item>
 													<Nav.Item>
-														<Nav.Link eventKey="third">Administration</Nav.Link>
+														<Nav.Link eventKey="second2">
+															Analyse report
+														</Nav.Link>
+													</Nav.Item>
+													<Nav.Item>
+														<Nav.Link eventKey="third">
+															User Administration
+														</Nav.Link>
 													</Nav.Item>
 												</Nav>
 											</Card.Header>
@@ -66,6 +73,7 @@ class AdminReports extends Component {
 														<Upload />
 													</Tab.Pane>
 													<Tab.Pane eventKey="second">SECOND</Tab.Pane>
+													<Tab.Pane eventKey="second2">SECOND 2</Tab.Pane>
 													<Tab.Pane eventKey="third">THIRD</Tab.Pane>
 												</Tab.Content>
 											</Card.Body>

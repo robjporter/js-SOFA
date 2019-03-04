@@ -4,6 +4,7 @@ import LoginForm from "../../components/LoginForm";
 import NameColumn from "../../components/NameColumn";
 import { Redirect } from "react-router";
 import { AuthConsumer } from "react-check-auth";
+import { cons } from "fp-ts/lib/Array";
 
 class Home extends Component {
 	render() {
@@ -13,6 +14,8 @@ class Home extends Component {
 					{({ userInfo }) => {
 						// Redirect the user to login if they are not logged in
 						if (userInfo) {
+							console.log("REDIRECTING");
+							console.log(userInfo);
 							return <Redirect to="/sofa" />;
 						}
 					}}
