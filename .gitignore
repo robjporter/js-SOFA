@@ -5,3 +5,4 @@ node_modules
 /server/keys
 yarn.lock
 yarn-error.log
+package-lock.json

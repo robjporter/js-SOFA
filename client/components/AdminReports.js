@@ -6,6 +6,9 @@ import Card from "react-bootstrap/Card";
 import Nav from "react-bootstrap/Nav";
 import Tab from "react-bootstrap/Tab";
 import Upload from "../components/Upload";
+import RemoveUploads from "../components/RemoveUploads";
+import AnalyseReports from "../components/AnalyseReports";
+import UserAdmin from "../components/UserAdmin";
 
 class AdminReports extends Component {
 	constructor(props) {
@@ -37,7 +40,7 @@ class AdminReports extends Component {
 					<div className="col" style={{ height: "calc(100vh-400px)" }}>
 						<div className="text-center align-center" style={{ height: "80%" }}>
 							<div className="row h-100">
-								<div className="col w-100 ml-3">
+								<div className="col w-100 ml-3 mr-3">
 									<Card className="h-100">
 										<Tab.Container
 											id="left-tabs-example"
@@ -72,9 +75,15 @@ class AdminReports extends Component {
 													<Tab.Pane eventKey="first">
 														<Upload />
 													</Tab.Pane>
-													<Tab.Pane eventKey="second">SECOND</Tab.Pane>
-													<Tab.Pane eventKey="second2">SECOND 2</Tab.Pane>
-													<Tab.Pane eventKey="third">THIRD</Tab.Pane>
+													<Tab.Pane eventKey="second">
+														<RemoveUploads />
+													</Tab.Pane>
+													<Tab.Pane eventKey="second2">
+														<AnalyseReports />
+													</Tab.Pane>
+													<Tab.Pane eventKey="third">
+														<UserAdmin />
+													</Tab.Pane>
 												</Tab.Content>
 											</Card.Body>
 										</Tab.Container>

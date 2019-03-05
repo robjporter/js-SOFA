@@ -72,3 +72,47 @@
   font-size: 1.3125rem;
   font-weight: 600;
 }
+
+.list-wrapper {
+  top: 55px;
+  left: 0;
+  right: 0px;
+  bottom: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  position: absolute;
+}
+
+.list-wrapper2 {
+  top: 95px;
+  left: 0;
+  right: 0px;
+  bottom: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  position: absolute;
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.listItem {
+  flex-grow: 1;
+  flex: 1 1 17%;
+  height: 40px;
+}
+
+.listItem2 {
+  flex-grow: 1;
+  flex: 1 1 64%;
+  height: 40px;
+}
+
+.list:nth-child(even) {
+  background: #ccc;
+}

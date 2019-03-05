@@ -9,20 +9,35 @@ module.exports = {
 	role,
 	access,
 	logout,
-	updatePassword
+	updatePassword,
+	fetchUsers
 };
 
 let users = null;
 reloadUsers();
 
 function reloadUsers() {
-	console.log("RELOADING USERS");
 	users = JSON.parse(fs.readFileSync("../users.json", "utf8"));
 }
 
 async function logout(toke) {
 	const token = toke.split(" ")[1].trim();
 	return true;
+}
+
+async function fetchUsers(toke) {
+	return validate(toke).then(response => {
+		if (response) {
+			reloadUsers();
+			for (i = 0; i < users.length; i++) {
+				users[i].password = undefined;
+				delete users[i].password;
+			}
+			return users;
+		} else {
+			return {};
+		}
+	});
 }
 
 async function authenticate({ username, password }) {
@@ -96,6 +111,7 @@ async function access(toke, access) {
 }
 
 async function validate(toke) {
+	reloadUsers();
 	if (toke && toke !== "Bearer") {
 		const token = toke.split(" ")[1].trim();
 

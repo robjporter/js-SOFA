@@ -32,8 +32,41 @@ class AppRouter {
 		});
 
 		// -----------------------------------------------
+		// USER - routes
+		// -----------------------------------------------
+
+		app.get("/api/users/fetchusers", (req, res, next) => {
+			const token = req.headers.authorization;
+			if (!token) {
+				res.status(400).json({ message: "Invalid token provided." });
+			}
+
+			console.log("/api/users/fetchusers");
+			userService
+				.fetchUsers(token)
+				.then(response => {
+					console.log("/api/users/fetchusers -  2");
+					if (response) {
+						return res.status(200).json(response);
+					}
+					return res.status(200).json(false);
+				})
+				.catch(err => {
+					console.log(err);
+				});
+		});
+
+		app.get("/api/users/deleteuser", (req, res, next) => {
+			const token = req.headers.authorization;
+			if (!token) {
+				res.status(400).json({ message: "Invalid token provided." });
+			}
+		});
+
+		// -----------------------------------------------
 		// ADMIN - routes
 		// -----------------------------------------------
+
 		app.get("/api/admin/usagedata", (req, res, next) => {
 			const token = req.headers.authorization;
 			if (!token) {
@@ -53,6 +86,38 @@ class AppRouter {
 		// FILE - routes
 		// -----------------------------------------------
 
+		app.post("/api/files/deleteuploadedreport", (req, res, next) => {
+			const token = req.headers.authorization;
+			if (!token) {
+				res.status(400).json({ message: "Invalid token provided." });
+			}
+			fileService
+				.deleteFile(token, req.body)
+				.then(response => {
+					console.log(response);
+					if (response) {
+						res.status(200).json(response);
+					}
+				})
+				.catch(err => next(err));
+		});
+
+		app.get("/api/files/uploadedreports", (req, res, next) => {
+			const token = req.headers.authorization;
+			if (!token) {
+				res.status(400).json({ message: "Invalid token provided." });
+			}
+			fileService
+				.files(token)
+				.then(response => {
+					if (response) {
+						res.status(200).json(response);
+					}
+					return;
+				})
+				.catch(err => next(err));
+		});
+
 		app.post("/api/files/uploadreport", (req, res, next) => {
 			const token = req.headers.authorization;
 			if (!token) {
@@ -60,8 +125,6 @@ class AppRouter {
 			}
 			var form = new IncomingForm();
 			form.on("file", (field, file) => {
-				console.log("UPLOAD=======================");
-				console.log(file.name + " @ " + file.path);
 				fs.createReadStream(file.path).pipe(
 					fs.createWriteStream("./server/uploads/reports/" + file.name)
 				);
@@ -235,7 +298,7 @@ class AppRouter {
 					if (response.passwordChange) {
 						return res.status(200).json({ message: "DONE" });
 					}
-					return res.status(403).json({ message: "Failed to update password" });
+					return res.status(200).json({ message: "Failed to update password" });
 				})
 				.catch(err => next(err));
 		});

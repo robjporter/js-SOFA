@@ -12,14 +12,18 @@ class UserPreferences extends Component {
 		this._isMounted = false;
 		this.handleShow = this.handleShow.bind(this);
 		this.handleClose = this.handleClose.bind(this);
+		this._hideAlert = this._hideAlert.bind(this);
 		this._handleCurrentPassword = this._handleCurrentPassword.bind(this);
 		this._handleNewPassword = this._handleNewPassword.bind(this);
 		this._handleConfirmedPassword = this._handleConfirmedPassword.bind(this);
 		this._handleFormSubmission = this._handleFormSubmission.bind(this);
+		this._failPasswordChange = this._failPasswordChange.bind(this);
+		this._successPasswordChange = this._successPasswordChange.bind(this);
 
 		this.state = {
 			show: false,
 			isUpdatingPassword: false,
+			alert: null,
 			password: {
 				current: null,
 				new: null,
@@ -35,7 +39,17 @@ class UserPreferences extends Component {
 		this._isMounted = false;
 	}
 	handleClose() {
-		this.setState({ show: false });
+		this.setState({
+			show: false,
+			isUpdatingPassword: false,
+			alert: null,
+			password: {
+				current: null,
+				new: null,
+				match: null,
+				confirmed: null
+			}
+		});
 	}
 	handleShow() {
 		this.setState({ show: true, isUpdatingPassword: false });
@@ -55,9 +69,43 @@ class UserPreferences extends Component {
 		state.password.confirmed = event.target.value;
 		this.setState(state);
 	}
+	_successPasswordChange(title, message, callBack, style) {
+		this.setState({
+			alert: (
+				<SweetAlert
+					success
+					title={title}
+					onCancel={this._hideAlert}
+					onConfirm={callBack()}
+				>
+					{message}
+				</SweetAlert>
+			)
+		});
+	}
+	_failPasswordChange(title, message, callBack, style) {
+		this.setState({
+			alert: (
+				<SweetAlert
+					danger
+					title={title}
+					onCancel={this._hideAlert}
+					onConfirm={callBack()}
+				>
+					{message}
+				</SweetAlert>
+			)
+		});
+	}
+	_hideAlert() {
+		console.log("Hiding alert...");
+		this.setState({
+			alert: null
+		});
+	}
 	_handleFormSubmission(event) {
 		event.preventDefault();
-		this._handlePasswordMatch()
+		return this._handlePasswordMatch()
 			.then(success => {
 				if (success) {
 					this.setState({ isUpdatingPassword: true });
@@ -67,25 +115,22 @@ class UserPreferences extends Component {
 						this.state.password.confirmed
 					)
 						.then(response => {
+							console.log(response);
 							if (response.data.message === "DONE") {
 								this.setState({ isUpdatingPassword: false });
-								<SweetAlert
-									success
-									title="Password Updated"
-									onConfirm={this.hideAlert}
-								>
-									You clicked the button!
-								</SweetAlert>;
-								this.handleClose();
+								this._successPasswordChange(
+									"Password Changed",
+									"",
+									() => this.handleClose,
+									null
+								);
 							} else {
-								<SweetAlert
-									error
-									title="Password Update Failed"
-									onConfirm={this.hideAlert}
-								>
-									You clicked the button!
-								</SweetAlert>;
-								this.handleClose();
+								this._failPasswordChange(
+									"Password Change Failed",
+									"",
+									() => this.handleClose,
+									null
+								);
 							}
 						})
 						.catch(err => console.log("ERROR: ", err));
@@ -132,13 +177,13 @@ class UserPreferences extends Component {
 				<Button variant="primary" block size="sm" onClick={this.handleShow}>
 					Preferences
 				</Button>
-
 				<Modal
 					show={this.state.show}
 					size="md"
 					onHide={this.handleClose}
 					centered
 				>
+					{this.state.alert}
 					<Modal.Header closeButton>
 						<Modal.Title>
 							<b>Change Password</b>

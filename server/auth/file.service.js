@@ -9,7 +9,8 @@ module.exports = {
 	files,
 	generate,
 	download,
-	generated
+	generated,
+	deleteFile
 };
 
 async function files(toke) {
@@ -28,6 +29,26 @@ async function files(toke) {
 			return data;
 		}
 		return {};
+	});
+}
+
+async function deleteFile(toke, { file }) {
+	const token = toke.split(" ")[1].trim();
+	return verify(token).then(response => {
+		if (response) {
+			fs.unlink(
+				path.dirname(module.parent.filename) + "/uploads/reports/" + file,
+				err => {
+					if (err) {
+						console.log("ERROR: ", err);
+						return false;
+					}
+					return false;
+				}
+			);
+			return true;
+		}
+		return false;
 	});
 }
 
@@ -96,7 +117,7 @@ async function processData(file, type, toke) {
 			fs.createReadStream(file)
 				.pipe(csv())
 				.on("data", data => results.push(data))
-				.on("error", function(err) {
+				.on("error", err => {
 					reject(err);
 				})
 				.on("end", () => {
@@ -194,16 +215,16 @@ function updateUsageInfo(toke, value, opps) {
 
 function loadInterestedData(type) {
 	switch (type) {
-		case "Enterprise Networks":
-			return require("../data/en-interesting.json");
-		case "DataCenter":
-			return require("../data/dc-interesting.json");
-		case "Collaboration":
-			return require("../data/col-interesting.json");
-		case "Security":
-			return require("../data/sec-interesting.json");
-		default:
-			return "";
+	case "Enterprise Networks":
+		return require("../data/en-interesting.json");
+	case "DataCenter":
+		return require("../data/dc-interesting.json");
+	case "Collaboration":
+		return require("../data/col-interesting.json");
+	case "Security":
+		return require("../data/sec-interesting.json");
+	default:
+		return "";
 	}
 }
 
@@ -213,7 +234,7 @@ function saveProcessedData(data, type) {
 		const location = getSaveLocation(type);
 		try {
 			const csv = json2csv(data, { keys });
-			fs.writeFile(location, csv, function(err) {
+			fs.writeFile(location, csv, err => {
 				if (err) {
 					return console.log(err);
 				}
@@ -242,16 +263,16 @@ function getShortFileName(filename) {
 
 function getTypeShortName(type) {
 	switch (type) {
-		case "Enterprise Networks":
-			return "en";
-		case "DataCenter":
-			return "dc";
-		case "Collaboration":
-			return "col";
-		case "Security":
-			return "sec";
-		default:
-			return "";
+	case "Enterprise Networks":
+		return "en";
+	case "DataCenter":
+		return "dc";
+	case "Collaboration":
+		return "col";
+	case "Security":
+		return "sec";
+	default:
+		return "";
 	}
 }
 
