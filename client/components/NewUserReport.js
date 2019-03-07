@@ -23,7 +23,7 @@ class NewUserReport extends React.Component {
 			show: false,
 			type: this.props.type,
 			options: [],
-			value: "?",
+			value: "",
 			isReportGenerating: false,
 			buttonText: "Generate Report",
 			reportFileSelectDisabled: false,
@@ -55,7 +55,6 @@ class NewUserReport extends React.Component {
 			outputRecords: "",
 			showResults: false,
 			isReportGenerating: false,
-			value: "?",
 			reportFileSelectDisabled: false,
 			show: true
 		});
@@ -75,6 +74,7 @@ class NewUserReport extends React.Component {
 	}
 
 	generateReport() {
+		console.log("VALUE: ", this.state.value);
 		this.setState({ isReportGenerating: true }, () => {
 			this.setState({ reportFileSelectDisabled: true });
 			ReportGenerate(
@@ -104,7 +104,9 @@ class NewUserReport extends React.Component {
 				if (response.data.length > 0) {
 					for (let i = 0; i < response.data.length; i++) {
 						if (i === 0) {
-							this.setState({ value: response.data[0] });
+							if (this.state.value === "") {
+								this.setState({ value: response.data[0] });
+							}
 						}
 						this.setState(prevState => ({
 							options: [

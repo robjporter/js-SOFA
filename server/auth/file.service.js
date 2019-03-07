@@ -61,9 +61,9 @@ async function generate(toke, { file, type }) {
 				type,
 				toke
 			)
-				.then(response2 => {
-					if (response2) {
-						return response2;
+				.then(response => {
+					if (response) {
+						return response;
 					}
 				})
 				.catch(error => {
