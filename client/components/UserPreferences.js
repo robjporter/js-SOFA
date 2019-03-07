@@ -115,7 +115,6 @@ class UserPreferences extends Component {
 						this.state.password.confirmed
 					)
 						.then(response => {
-							console.log(response);
 							if (response.data.message === "DONE") {
 								this.setState({ isUpdatingPassword: false });
 								this._successPasswordChange(

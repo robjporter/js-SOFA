@@ -1,5 +1,13 @@
 {
   "verbose": true,
   "watch": ["./server/"],
-  "ignore": ["./server/data", "./server/uploads", "./samples"]
+  "ignore": [
+    "./server/data",
+    "./server/uploads",
+    "./samples",
+    "server/*.json",
+    "server/users.json",
+    "LICENSE",
+    "README.md"
+  ]
 }

@@ -35,17 +35,34 @@ class AppRouter {
 		// USER - routes
 		// -----------------------------------------------
 
+		app.post("/api/users/adduser", (req, res, next) => {
+			const token = req.headers.authorization;
+			if (!token) {
+				res.status(400).json({ message: "Invalid token provided." });
+			}
+
+			userService
+				.addNewUser(token, req.body)
+				.then(response => {
+					if (response) {
+						return res.status(200).json(response);
+					}
+					return res.status(200).json(false);
+				})
+				.catch(err => {
+					console.log(err);
+				});
+		});
+
 		app.get("/api/users/fetchusers", (req, res, next) => {
 			const token = req.headers.authorization;
 			if (!token) {
 				res.status(400).json({ message: "Invalid token provided." });
 			}
 
-			console.log("/api/users/fetchusers");
 			userService
 				.fetchUsers(token)
 				.then(response => {
-					console.log("/api/users/fetchusers -  2");
 					if (response) {
 						return res.status(200).json(response);
 					}

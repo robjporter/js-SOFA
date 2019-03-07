@@ -1,7 +1,10 @@
+const path = require("path");
 const config = require("../config.json");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt-nodejs");
 var fs = require("fs");
+
+const userFilename = path.dirname(module.parent.filename) + "/users.json";
 
 module.exports = {
 	authenticate,
@@ -10,14 +13,16 @@ module.exports = {
 	access,
 	logout,
 	updatePassword,
-	fetchUsers
+	fetchUsers,
+	addNewUser
 };
 
 let users = null;
 reloadUsers();
 
 function reloadUsers() {
-	users = JSON.parse(fs.readFileSync("../users.json", "utf8"));
+	users = null;
+	users = JSON.parse(fs.readFileSync(userFilename, "utf8"));
 }
 
 async function logout(toke) {
@@ -25,10 +30,49 @@ async function logout(toke) {
 	return true;
 }
 
+async function addNewUser(toke, user) {
+	return validate(toke).then(response => {
+		if (response) {
+			reloadUsers();
+
+			user = user.user;
+			const exists = users.find(u => u.username === user.username);
+			if (exists) {
+				return false;
+			}
+			var fs = require("fs");
+			var fileName = userFilename;
+			var file = require(fileName);
+			let count = users.length;
+
+			user.id = count;
+			user.password = bcrypt.hashSync(user.password);
+			if (user.admin) {
+				user.role = "admin";
+			} else {
+				user.role = "user";
+			}
+			delete user.admin;
+
+			file.push(user);
+
+			fs.writeFileSync(fileName, JSON.stringify(file), function(err) {
+				if (err) {
+					console.log(err);
+					return { AddedUser: false };
+				}
+			});
+			return { AddedUser: true };
+		}
+		return { AddedUser: false };
+	});
+}
+
 async function fetchUsers(toke) {
 	return validate(toke).then(response => {
 		if (response) {
 			reloadUsers();
+			console.log("fetchUsers: ", users.length);
 			for (i = 0; i < users.length; i++) {
 				users[i].password = undefined;
 				delete users[i].password;
@@ -66,16 +110,18 @@ async function updatePassword(toke, { cPassword, nPassword }) {
 			);
 			if (user) {
 				var fs = require("fs");
-				var fileName = "../users.json";
+				var fileName = userFilename;
 				var file = require(fileName);
 
 				file[user.id - 1].password = bcrypt.hashSync(nPassword);
 
-				fs.writeFile(fileName, JSON.stringify(file), function(err) {
-					if (err) {
-						return { passwordChange: false };
-					}
-				});
+				setTimeout(function() {
+					fs.writeFileSync(fileName, JSON.stringify(file), function(err) {
+						if (err) {
+							return { passwordChange: false };
+						}
+					});
+				}, 5);
 				return { passwordChange: true };
 			}
 		}
@@ -124,8 +170,8 @@ async function validate(toke) {
 
 			const user = users.find(u => u.id === userId);
 			if (user) {
-				user.firstName = capitalizeFirstLetter(user.firstName);
-				user.lastName = capitalizeFirstLetter(user.lastName);
+				user.firstname = capitalizeFirstLetter(user.firstname);
+				user.lastname = capitalizeFirstLetter(user.lastname);
 				const { password, ...userWithoutPassword } = user;
 				return {
 					...userWithoutPassword

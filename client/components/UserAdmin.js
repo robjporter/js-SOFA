@@ -1,7 +1,10 @@
 import React from "react";
 import { FetchUsers } from "../helpers/fetchusers";
-import Button from "react-bootstrap/Button";
-import { TiEdit, TiDelete } from "react-icons/ti";
+import { AuthConsumer } from "react-check-auth";
+import AddUser from "../components/AddUser";
+import EditUser from "../components/EditUser";
+import DeleteUser from "../components/DeleteUser";
+import { compareDesc } from "date-fns";
 
 class UserAdmin extends React.Component {
 	constructor(props) {
@@ -10,13 +13,18 @@ class UserAdmin extends React.Component {
 		this.state = {
 			list: []
 		};
-		this.handleDelete = this.handleDelete.bind(this);
-		this.handleEdit = this.handleEdit.bind(this);
 		this.updateUsers = this.updateUsers.bind(this);
 	}
 	componentDidMount() {
 		this._isMounted = true;
 		this.updateUsers();
+	}
+	componentWillUnmount() {
+		if (this._isMounted) {
+			this.state = {
+				list: []
+			};
+		}
 	}
 	leftFillNum(num, width) {
 		return num.toString().padStart(width, "0");
@@ -43,21 +51,67 @@ class UserAdmin extends React.Component {
 				});
 		}
 	}
-	handleEdit(pos) {
-		console.log("Editing User: ", pos);
-	}
-	handleDelete(pos) {
-		if (this._isMounted) {
-			DeleteUser(localStorage.getItem("sofatoken"), this.state.list[pos - 1])
-				.then(response => {
-					console.log(response);
-					this.updateReports();
-					return "";
-				})
-				.catch(err => {
-					console.log(err);
-				});
-		}
+	code(count, index) {
+		console.log(count);
+		return (
+			<div className="list">
+				<div className="listItem mt-3">{this.leftFillNum(count, 3)}</div>
+				<div className="listItem2 mt-3 text-left">{index}</div>
+				<div className="listItem mt-1" key={"li" + count.toString()}>
+					<EditUser key={"eu" + count.toString()} pos={count} />
+					<AuthConsumer>
+						{({ userInfo }) => {
+							if (userInfo) {
+								if (userInfo.username !== index) {
+									console.log(count);
+									return (
+										<DeleteUser
+											key={"du" + count.toString()}
+											pos={count.toString()}
+										/>
+									);
+								} else {
+									return <span style={{ width: "20px" }}> </span>;
+								}
+							}
+						}}
+					</AuthConsumer>
+				</div>
+			</div>
+		);
+		/*
+return (
+								<div className="list" key={"l" + count.toString()}>
+									<div className="listItem mt-3">
+										{this.leftFillNum(count, 3)}
+									</div>
+									<div className="listItem2 mt-3 text-left">{index}</div>
+									<div className="listItem mt-1" key={"li" + count.toString()}>
+										<EditUser
+											key={"eu" + count.toString()}
+											pos={count.toString()}
+										/>
+										<AuthConsumer>
+											{({ userInfo }) => {
+												if (userInfo) {
+													if (userInfo.username !== index) {
+														console.log(count);
+														return (
+															<DeleteUser
+																key={"du" + count.toString()}
+																pos={count.toString()}
+															/>
+														);
+													} else {
+														return <span style={{ width: "20px" }}> </span>;
+													}
+												}
+											}}
+										</AuthConsumer>
+									</div>
+								</div>
+							);
+        */
 	}
 	render() {
 		let count = 0;
@@ -66,12 +120,7 @@ class UserAdmin extends React.Component {
 		if (list.length > 0) {
 			content = (
 				<div>
-					<Button
-						variant="primary"
-						style={{ marginTop: "-15px", float: "left" }}
-					>
-						Add New User
-					</Button>
+					<AddUser />
 					<div className="list-wrapper2">
 						<div className="list">
 							<div className="listItem mt-3">
@@ -86,32 +135,7 @@ class UserAdmin extends React.Component {
 						</div>
 						{list.map(index => {
 							count = count + 1;
-							return (
-								<div className="list" key={count}>
-									<div className="listItem mt-3">
-										{this.leftFillNum(count, 3)}
-									</div>
-									<div className="listItem2 mt-3 text-left">{index}</div>
-									<div className="listItem mt-1">
-										<Button
-											variant="warning"
-											key={"e" + count}
-											style={{ padding: "2px !important", minWidth: "20px" }}
-											onClick={this.handleEdit.bind(this, count)}
-										>
-											<TiEdit size="25px" color="white" />
-										</Button>
-										<Button
-											variant="danger"
-											key={"d" + count}
-											style={{ minWidth: "20px" }}
-											onClick={this.handleDelete.bind(this, count)}
-										>
-											<TiDelete size="25px" />
-										</Button>
-									</div>
-								</div>
-							);
+							return this.code(count, index);
 						})}
 					</div>
 				</div>

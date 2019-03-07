@@ -70,7 +70,7 @@ class Header extends Component {
 					<AuthConsumer>
 						{({ userInfo }) => {
 							if (userInfo) {
-								return userInfo.firstName;
+								return userInfo.firstname;
 							}
 						}}
 					</AuthConsumer>
@@ -96,7 +96,7 @@ class Header extends Component {
 										<strong>
 											<AuthConsumer>
 												{({ userInfo }) => {
-													return userInfo.firstName + " " + userInfo.lastName;
+													return userInfo.firstname + " " + userInfo.lastname;
 												}}
 											</AuthConsumer>
 										</strong>
