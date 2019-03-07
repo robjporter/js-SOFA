@@ -18,10 +18,10 @@ const usport = 80;
 // Server https port - used for main content
 const sport = 9000;
 const app = express();
-const options = {
-	key: fs.readFileSync("./server/keys/server-key.pem"),
-	cert: fs.readFileSync("./server/keys/server-cert.pem")
-};
+//const options = {
+//	key: fs.readFileSync("./server/keys/server-key.pem"),
+//	cert: fs.readFileSync("./server/keys/server-cert.pem")
+//};
 
 const whitelist = [
 	"http://localhost:8000",

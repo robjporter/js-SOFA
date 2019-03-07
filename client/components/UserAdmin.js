@@ -52,11 +52,17 @@ class UserAdmin extends React.Component {
 		}
 	}
 	code(count, index) {
-		console.log(count);
 		return (
-			<div className="list">
-				<div className="listItem mt-3">{this.leftFillNum(count, 3)}</div>
-				<div className="listItem2 mt-3 text-left">{index}</div>
+			<div className="list" key={"lm" + count.toString()}>
+				<div className="listItem mt-3" key={"lma" + count.toString()}>
+					{this.leftFillNum(count, 3)}
+				</div>
+				<div
+					className="listItem2 mt-3 text-left"
+					key={"lmb" + count.toString()}
+				>
+					{index}
+				</div>
 				<div className="listItem mt-1" key={"li" + count.toString()}>
 					<EditUser key={"eu" + count.toString()} pos={count} />
 					<AuthConsumer>

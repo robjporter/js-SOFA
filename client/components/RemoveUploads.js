@@ -76,7 +76,7 @@ class RemoveUploads extends React.Component {
 					{list.map(index => {
 						count = count + 1;
 						return (
-							<div className="list" key={count}>
+							<div className="list" key={"ru" + count}>
 								<div className="listItem mt-3">
 									{this.leftFillNum(count, 3)}
 								</div>
@@ -84,7 +84,7 @@ class RemoveUploads extends React.Component {
 								<div className="listItem mt-1">
 									<Button
 										variant="danger"
-										key={count}
+										key={"rud" + count}
 										style={{ minWidth: "20px" }}
 										onClick={this.handleDelete.bind(this, count)}
 									>
