@@ -2,17 +2,16 @@ import React from "react";
 import Button from "react-bootstrap/Button";
 import { TiDelete } from "react-icons/ti";
 import SweetAlert from "react-bootstrap-sweetalert";
+import { DeleteAUser } from "../helpers/deleteuser";
 
 class DeleteUser extends React.Component {
 	constructor(props) {
 		super(props);
 		this._isMounted = false;
-		console.log(this.props);
 		this.state = {
 			id: this.props.pos,
 			alert: null
 		};
-		console.log(this.state);
 		this._handleDelete = this._handleDelete.bind(this);
 		this._deleteUser = this._deleteUser.bind(this);
 		this._cancelDelete = this._cancelDelete.bind(this);
@@ -28,21 +27,16 @@ class DeleteUser extends React.Component {
 		});
 	}
 	_deleteUser(pos) {
-		console.log("DELETING USER: ", pos);
-		/*
-
-			DeleteUser(localStorage.getItem("sofatoken"), this.state.list[pos - 1])
-				.then(response => {
-					console.log(response);
-					return "";
-				})
-				.catch(err => {
-					console.log(err);
-				});
-        */
+		DeleteAUser(localStorage.getItem("sofatoken"), pos - 1)
+			.then(response => {
+				this._hideAlert();
+				return "";
+			})
+			.catch(err => {
+				console.log(err);
+			});
 	}
 	_cancelDelete() {
-		console.log("CANCELED DELETE");
 		this._hideAlert();
 	}
 	_handleDelete(pos) {

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const DeleteUser = (token = null, user = null) => {
+export const DeleteAUser = (token = null, user = null) => {
 	const url = "/api/users/deleteuser";
 	const headers = {
 		"Content-Type": "application/json",
