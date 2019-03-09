@@ -4,30 +4,39 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
+import SweetAlert from "react-bootstrap-sweetalert";
+import { SECURITY_ENCRYPTION_KEY } from "../../common/constants";
+import { sha256 } from "js-sha256";
 import { TiEdit } from "react-icons/ti";
 import { loadUser } from "../helpers/loaduser";
+import { updateUser } from "../helpers/updateuser";
 
 class EditUser extends React.Component {
   constructor(props) {
     super(props);
     this._isMounted = false;
     this.state = {
+      alert: null,
       id: this.props.pos,
       isUpdatingUser: false,
       show: false,
       accessLevels: "",
       changed: false,
       user: {
+        id: "",
         username: "",
         password: "",
         firstname: "",
         lastname: "",
         admin: false,
+        logo: "",
+        role: "",
         access: "col"
       }
     };
     this._handleEdit = this._handleEdit.bind(this);
     this._handleClose = this._handleClose.bind(this);
+    this._handleAlertClose = this._handleAlertClose.bind(this);
     this._handleAdmin = this._handleAdmin.bind(this);
     this._getAccessLevels = this._getAccessLevels.bind(this);
     this._handleFormSubmission = this._handleFormSubmission.bind(this);
@@ -36,6 +45,9 @@ class EditUser extends React.Component {
     this._handleEditLastname = this._handleEditLastname.bind(this);
     this._handleEditPassword = this._handleEditPassword.bind(this);
     this._handleEditTechnology = this._handleEditTechnology.bind(this);
+    this._handleTechnologyCheck = this._handleTechnologyCheck.bind(this);
+    this._successPasswordChange = this._successPasswordChange.bind(this);
+    this._failPasswordChange = this._failPasswordChange.bind(this);
   }
   componentDidMount() {
     this._isMounted = true;
@@ -81,22 +93,34 @@ class EditUser extends React.Component {
   }
   _handleEdit(pos) {
     this.setState({ show: true, isUpdatingUser: false });
+    this._getAccessLevels();
     loadUser(localStorage.getItem("sofatoken"), pos)
       .then(response => {
         let state = Object.assign({}, this.state);
+        state.user.id = response.data.id;
         state.user.username = response.data.username;
         state.user.firstname = response.data.firstname;
         state.user.lastname = response.data.lastname;
+        state.user.role = response.data.role;
+        state.user.logo = response.data.logo;
         if (response.data.role === "admin") {
           state.user.admin = true;
+          state.user.access = "";
         } else {
           state.user.admin = false;
+          state.user.access = response.data.access[0];
         }
         this.setState(state);
+        this._getAccessLevels();
       })
       .catch(err => {
         console.log(err);
       });
+  }
+  _handleAlertClose() {
+    this.setState({
+      alert: null
+    });
   }
   _handleClose() {
     if (this._isMounted) {
@@ -112,32 +136,93 @@ class EditUser extends React.Component {
           firstname: "",
           lastname: "",
           admin: false,
+          logo: "",
+          role: "",
           access: "col"
         }
       });
     }
   }
+  _successPasswordChange(title, message, callBack, style) {
+    this.setState({
+      alert: (
+        <SweetAlert
+          success
+          title={title}
+          onCancel={this._handleAlertClose}
+          onConfirm={callBack()}
+        >
+          {message}
+        </SweetAlert>
+      )
+    });
+  }
+  _failPasswordChange(title, message, callBack, style) {
+    this.setState({
+      alert: (
+        <SweetAlert
+          danger
+          title={title}
+          onCancel={this._handleAlertClose}
+          onConfirm={callBack()}
+        >
+          {message}
+        </SweetAlert>
+      )
+    });
+  }
+  _handleTechnologyCheck(event) {
+    let state = Object.assign({}, this.state);
+    state.user.access = event.target.id;
+    state.changed = true;
+    this.setState(state);
+    this._getAccessLevels();
+  }
   _handleFormSubmission(event) {
     event.preventDefault();
-    console.log("_handleFormSubmission");
+    this.setState({ isUpdatingUser: true });
     if (this.state.changed) {
-      console.log(this.state.user);
-    } else {
-      console.log("NOTHING CHANGED");
+      updateUser(localStorage.getItem("sofatoken"), this.state.user)
+        .then(response => {
+          if (response.data.UpdateUser) {
+            this.setState({ isUpdatingUser: false });
+            this._successPasswordChange(
+              "User Updated Successfully",
+              "",
+              () => this._handleAlertClose,
+              null
+            );
+          } else {
+            throw "User update failed.";
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          this.setState({ isUpdatingUser: false });
+          this._failPasswordChange(
+            "User Update Failed",
+            "",
+            () => this._handleAlertClose,
+            null
+          );
+        });
     }
+    this._handleClose();
   }
   _handleAdmin(event) {
-    if (this._isMounted) {
-      let state = Object.assign({}, this.state);
-      state.user.admin = event.target.checked;
-      state.changed = true;
-      this.setState(state);
-      this._getAccessLevels();
+    let state = Object.assign({}, this.state);
+    state.user.admin = event.target.checked;
+    state.user.role = "admin";
+    if (event.target.checked === false) {
+      state.user.access = "col";
+      state.user.role = "user";
     }
+    state.changed = true;
+    this.setState(state);
+    this._getAccessLevels();
   }
   _getAccessLevels() {
     let accessLevels = "";
-
     if (this._isMounted) {
       if (this.state.user.admin) {
         let state = Object.assign({}, this.state);
@@ -145,10 +230,13 @@ class EditUser extends React.Component {
         this.setState(state);
       } else {
         accessLevels = (
-          <Form.Group key="new_technology" onChange={this._handleTechnology}>
+          <Form.Group
+            key="new_technology"
+            onChange={this._handleTechnologyCheck}
+          >
             <Form.Check
               inline
-              defaultChecked
+              checked={this.state.user.access === "col"}
               type="radio"
               id="col"
               name="new_technology"
@@ -156,6 +244,7 @@ class EditUser extends React.Component {
             />
             <Form.Check
               inline
+              checked={this.state.user.access === "dc"}
               type="radio"
               id="dc"
               name="new_technology"
@@ -163,6 +252,7 @@ class EditUser extends React.Component {
             />
             <Form.Check
               inline
+              checked={this.state.user.access === "en"}
               type="radio"
               id="en"
               name="new_technology"
@@ -170,6 +260,7 @@ class EditUser extends React.Component {
             />
             <Form.Check
               inline
+              checked={this.state.user.access === "sec"}
               type="radio"
               id="sec"
               name="new_technology"
@@ -177,9 +268,6 @@ class EditUser extends React.Component {
             />
           </Form.Group>
         );
-        let state = Object.assign({}, this.state);
-        state.user.access = "col";
-        this.setState(state);
       }
     }
     this.setState({ accessLevels: accessLevels });
@@ -195,13 +283,13 @@ class EditUser extends React.Component {
         >
           <TiEdit size="25px" color="white" />
         </Button>
+        {this.state.alert}
         <Modal
           show={this.state.show}
           size="md"
           onHide={this._handleClose}
           centered
         >
-          {this.state.alert}
           <Modal.Header closeButton>
             <Modal.Title>
               <b>Change Password</b>
@@ -278,6 +366,7 @@ class EditUser extends React.Component {
                   type="checkbox"
                   label="Admin User"
                   onChange={this._handleAdmin}
+                  checked={this.state.user.admin}
                 />
               </Form.Group>
               {this.state.accessLevels}

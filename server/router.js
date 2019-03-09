@@ -35,6 +35,23 @@ class AppRouter {
     // USER - routes
     // -----------------------------------------------
 
+    app.post("/api/users/updateuser", (req, res, next) => {
+      const token = req.headers.authorization;
+      if (!token) {
+        res.status(400).json({ message: "Invalid token provided." });
+      }
+
+      userService
+        .updateUser(token, req.body)
+        .then(response => {
+          return res.status(200).json(response);
+        })
+        .catch(err => {
+          console.log(err);
+          return res.status(200).json(false);
+        });
+    });
+
     app.post("/api/users/deleteuser", (req, res, next) => {
       const token = req.headers.authorization;
       if (!token) {

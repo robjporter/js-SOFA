@@ -16,7 +16,8 @@ module.exports = {
   fetchUser,
   fetchUsers,
   addNewUser,
-  deleteUser
+  deleteUser,
+  updateUser
 };
 
 let users = null;
@@ -30,6 +31,45 @@ function reloadUsers() {
 async function logout(toke) {
   const token = toke.split(" ")[1].trim();
   return true;
+}
+
+async function updateUser(toke, user) {
+  return validate(toke).then(response => {
+    if (response) {
+      reloadUsers();
+
+      user = user.userid;
+      const exists = users.find(u => u.id === user.id);
+
+      if (!exists) {
+        return { UpdateUser: false };
+      }
+
+      var fs = require("fs");
+      var fileName = userFilename;
+      var file = require(fileName);
+
+      file[exists.id - 1].username = user.username;
+      file[exists.id - 1].firstname = user.firstname;
+      file[exists.id - 1].lastname = user.lastname;
+      file[exists.id - 1].role = user.role;
+      file[exists.id - 1].logo = user.logo;
+      file[exists.id - 1].access = [user.access];
+      if (user.password != "") {
+        file[exists.id - 1].password = bcrypt.hashSync(user.password);
+      }
+
+      setTimeout(function() {
+        fs.writeFileSync(fileName, JSON.stringify(file), function(err) {
+          if (err) {
+            return { UpdateUser: false };
+          }
+        });
+      }, 5);
+      return { UpdateUser: true };
+    }
+    return { UpdateUser: false };
+  });
 }
 
 async function deleteUser(toke, pos) {
